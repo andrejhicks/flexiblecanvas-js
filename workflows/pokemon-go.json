@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "title": "Pokémon Go outing",
+    "subtitle": "Choose a goal, prepare, and head out."
+  },
+  "layout": {
+    "direction": "LR",
+    "nodeSpacing": 90,
+    "rankSpacing": 160
+  },
+  "nodes": [
+    {
+      "id": "goal",
+      "label": "Choose a goal",
+      "kind": "start",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "description": "Pick a focus for this play session.",
+      "details": [
+        "Examples: explore, catch Pokémon, or meet friends."
+      ],
+      "owner": "Player",
+      "status": "example",
+      "notes": ""
+    },
+    {
+      "id": "prepare",
+      "label": "Prepare supplies",
+      "kind": "process",
+      "position": {
+        "x": 460,
+        "y": 0
+      },
+      "description": "Check battery, time, and in-game inventory.",
+      "details": [],
+      "owner": "Player",
+      "status": "example",
+      "notes": ""
+    },
+    {
+      "id": "ready",
+      "label": "Ready to head out?",
+      "kind": "decision",
+      "position": {
+        "x": 920,
+        "y": 0
+      },
+      "description": "Decide whether the plan works today.",
+      "details": [],
+      "owner": "Player",
+      "status": "example",
+      "notes": ""
+    },
+    {
+      "id": "adjust",
+      "label": "Adjust the plan",
+      "kind": "manual",
+      "position": {
+        "x": 460,
+        "y": 350
+      },
+      "description": "Shorten the route or reschedule.",
+      "details": [],
+      "owner": "Player",
+      "status": "example",
+      "notes": ""
+    },
+    {
+      "id": "play",
+      "label": "Play the session",
+      "kind": "process",
+      "position": {
+        "x": 1380,
+        "y": 0
+      },
+      "description": "Open the encounter workflow for a closer look.",
+      "details": [],
+      "owner": "Player",
+      "status": "example",
+      "notes": ""
+    },
+    {
+      "id": "review",
+      "label": "Review the session",
+      "kind": "end",
+      "position": {
+        "x": 1380,
+        "y": 350
+      },
+      "description": "Capture highlights and choose a next goal.",
+      "details": [],
+      "owner": "Player",
+      "status": "example",
+      "notes": ""
+    }
+  ],
+  "edges": [
+    {
+      "id": "outing-0",
+      "to": "prepare",
+      "label": "set focus",
+      "kind": "default",
+      "note": "Illustrative manual workflow.",
+      "from": "goal"
+    },
+    {
+      "id": "outing-1",
+      "to": "ready",
+      "label": "check readiness",
+      "kind": "default",
+      "note": "Illustrative manual workflow.",
+      "from": "prepare"
+    },
+    {
+      "id": "outing-2",
+      "to": "play",
+      "label": "yes",
+      "kind": "conditional",
+      "note": "Illustrative manual workflow.",
+      "from": "ready"
+    },
+    {
+      "id": "outing-3",
+      "to": "adjust",
+      "label": "not yet",
+      "kind": "conditional",
+      "note": "Illustrative manual workflow.",
+      "from": "ready"
+    },
+    {
+      "id": "outing-4",
+      "to": "prepare",
+      "label": "try again",
+      "kind": "feedback",
+      "note": "Illustrative manual workflow.",
+      "from": "adjust"
+    },
+    {
+      "id": "outing-5",
+      "to": "review",
+      "label": "finish",
+      "kind": "default",
+      "note": "Illustrative manual workflow.",
+      "from": "play"
+    }
+  ]
+}

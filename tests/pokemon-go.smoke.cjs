@@ -1,0 +1,50 @@
+// Run with Playwright available: node tests/pokemon-go.smoke.cjs
+const {chromium}=require('playwright');
+const path=require('node:path');
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:1440,height:1000}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const url='file://'+path.resolve(__dirname,'../examples/pokemon-go.html');
+ await page.goto(url);await page.evaluate(()=>localStorage.clear());await page.reload();
+ assert.equal(await page.locator('.card').count(),6);
+ await page.evaluate(()=>{camera={x:70,y:80,z:.5};transform()});
+ const c=await page.locator('.card').first().boundingBox();
+ await page.mouse.move(c.x+50,c.y+35);await page.mouse.down();await page.mouse.move(c.x+100,c.y+65,{steps:5});await page.mouse.up();
+ assert.deepEqual(await page.evaluate(()=>state.boards[0].nodes[0].position),{x:100,y:60});
+ await page.click('#undo');assert.equal(await page.evaluate(()=>state.boards[0].nodes[0].position.x),0);
+ await page.click('#redo');await page.reload();assert.equal(await page.evaluate(()=>state.boards[0].nodes[0].position.x),100);
+ await page.locator('.card').first().click();
+ const special='Notes <tag> & </script> literal';
+ await page.fill('#editnotes',special);await page.click('#applyedit');
+ await page.selectOption('#viewselect','encounter');assert.equal(await page.locator('.card').count(),6);
+ await page.selectOption('#viewselect','outing');
+ page.on('dialog',d=>d.accept());
+ const before=await page.evaluate(()=>JSON.stringify(state));
+ await page.locator('#fileinput').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from('{"schemaVersion":1}')});
+ assert.equal(await page.evaluate(()=>JSON.stringify(state)),before);
+ // Round trip workspace JSON through actual controls.
+ let pending=page.waitForEvent('download');await page.selectOption('#exports','workspace');let dl=await pending;
+ const workspace=await dl.path();await page.locator('#fileinput').setInputFiles(workspace);
+ assert.equal(await page.evaluate(()=>state.boards[0].nodes[0].notes),special);
+ pending=page.waitForEvent('download');await page.click('#savehtml');dl=await pending;
+ const exported=await dl.path();const html=fs.readFileSync(exported,'utf8');
+ assert(!/\bWIN\b|CRM|QuickBooks|SharePoint|Jasmine|Zeffy|Entra/i.test(html));
+ const portable=path.join(path.dirname(exported),'portable.html');fs.writeFileSync(portable,html);
+ const fresh=await browser.newPage();await fresh.goto('file://'+portable);
+ assert.equal(await fresh.evaluate(()=>state.boards[0].nodes[0].notes),special);
+ assert.equal(await fresh.evaluate(()=>state.boards[0].nodes[0].position.x),100);
+ // Changes persist when connectors are edited.
+ await page.evaluate(()=>{inspectEdge(0)});await page.fill('#changeedge','ready now');await page.click('#saveedge');
+ assert.equal(await page.evaluate(()=>board().edges[0].label),'ready now');
+ const blocked=await browser.newPage();await blocked.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}}));await blocked.goto(url);await blocked.click('#add');
+ assert.match(await blocked.locator('#status').textContent(),/unavailable/);
+ await page.setViewportSize({width:390,height:844});assert(await page.locator('#viewselect').isVisible());await page.selectOption('#viewselect','review');assert.equal(await page.locator('.card').count(),4);
+ await page.screenshot({path:path.join(require('node:os').tmpdir(),'flexiblecanvas-mobile.png')});
+ await page.setViewportSize({width:1440,height:1000});await page.selectOption('#viewselect','outing');await page.click('#fit');
+ await page.screenshot({path:path.join(require('node:os').tmpdir(),'flexiblecanvas-desktop.png')});
+ pending=page.waitForEvent('download');await page.selectOption('#exports','svg');dl=await pending;assert(fs.readFileSync(await dl.path(),'utf8').startsWith('<svg'));
+ assert.deepEqual(errors,[]);await browser.close();console.log('PASS: drag/model, undo/redo, reload, edits, views, invalid import, JSON/HTML round trips, blocked storage, mobile, SVG, privacy scan.');
+})().catch(e=>{console.error(e);process.exit(1)});

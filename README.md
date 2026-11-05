@@ -1,5 +1,32 @@
 # Flexible Canvas
 
+## Standalone Pokémon Go playground
+
+Open [examples/pokemon-go.html](examples/pokemon-go.html) in a browser after downloading it. It runs directly from disk with no installation, backend, or game account.
+
+- Three connected views: outing preparation, encounters, and session review.
+- Drag cards, pan/zoom, edit notes and connections, search, and undo/redo.
+- Edits update the workspace model and save in the current browser.
+- Export HTML, workspace JSON, a single-view Flexible Canvas JSON, or SVG.
+- [Example workspace](examples/pokemon-go.workspace.json) can be imported into the standalone page.
+- [Single-view example](workflows/pokemon-go.json) uses the existing Flexible Canvas node/edge format.
+- [Workflow Page Builder skill](docs/create-workflow-page/SKILL.md) describes how to create and adapt these pages.
+
+Browser storage is local to this browser and document. Downloads do not update GitHub or a shared backend. The page reports unavailable storage and keeps exports available. This is an unofficial manual planning illustration, without live game data or official artwork.
+
+The standalone page is independent of the original React app described below. The current repository tracks that application's source in `workflowcanvas.zip`; the root Vite entry references `src/main.jsx`, which is not present in the checked-in tree. The standalone example does not require unpacking that archive.
+
+Run the dependency-free model checks, then the browser checks with Playwright available:
+
+```bash
+node tests/pokemon-go.model.cjs
+node tests/pokemon-go.smoke.cjs
+```
+
+The smoke test covers model-backed dragging, local persistence, undo/redo, editing, invalid imports, JSON/HTML round trips, unavailable storage, responsive navigation, SVG export, and example-content isolation. Install Playwright and its Chromium browser in your test environment if they are not already available.
+
+---
+
 A local app for turning a JSON file into a detailed workflow diagram on an
 infinite whiteboard, then exporting it as a high-resolution PNG you can drop
 straight into a deck.
@@ -343,3 +370,4 @@ detail.
 ## Licence
 
 MIT, see [LICENSE](LICENSE). Every dependency is MIT too.
+

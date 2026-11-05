@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pokémon Go · Flexible Canvas</title>
+<style>
+:root{--ink:#183e3b;--muted:#617874;--paper:#f7f8f4;--line:#dbe4dd;--accent:#087b69;--nav:#113e39;--shadow:0 8px 26px #173d3510}*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper)}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #e7b654;outline-offset:3px}button{border:1px solid var(--line);background:white;color:var(--ink);border-radius:7px;padding:8px 11px;font-size:12px;font-weight:600}button:hover{background:#eaf1e9}button:disabled{opacity:.35;cursor:default}button.primary{background:var(--accent);color:white;border-color:var(--accent)}.app{display:grid;grid-template-columns:228px 1fr;height:100dvh;min-height:460px}.sidebar{background:var(--nav);color:#eef6e9;display:flex;flex-direction:column;padding:26px 18px 18px;overflow:auto;z-index:3}.brand{font-size:29px;font-weight:850;letter-spacing:-2px}.brand span{font-size:11px;letter-spacing:2px;color:#a7c8b9;display:block;margin-top:5px;font-weight:600}.sideintro{font-size:12px;color:#a7c8b9;line-height:1.65;margin:23px 0}.navlabel{font-size:10px;letter-spacing:1.8px;color:#9db7a9;text-transform:uppercase;margin:18px 0 9px}.nav{display:flex;flex-direction:column;gap:5px}.nav button{background:transparent;color:#cce0d3;border-color:transparent;text-align:left;display:flex;gap:11px;padding:11px 10px;font-weight:500;font-size:12px}.nav button b{font-size:10px;color:#82a99a;margin-top:2px}.nav button:hover,.nav button.active{background:#ffffff13;color:white}.nav button.active{border-color:#5b8a7655}.nav button.active b{color:#bfe6a6}.bottom{margin-top:auto;padding-top:24px;font-size:10px;line-height:1.7;color:#9cbcae}.bottom button{width:100%;margin-bottom:12px;background:#ffffff08;color:#e3efdd;border-color:#ffffff25}.main{min-width:0;display:flex;flex-direction:column;position:relative;overflow:hidden}.top{background:#fffdf8;border-bottom:1px solid var(--line);padding:20px 26px 15px;z-index:2}.eyebrow{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:9px}.dot{width:6px;height:6px;border-radius:100%;background:#b29a5e}h1{font-size:24px;letter-spacing:-.6px;margin:9px 0 6px}.subtitle{font-size:12px;color:var(--muted);line-height:1.55}.titleline{display:flex;justify-content:space-between;gap:20px}.badge{font-size:10px;white-space:nowrap;background:#f0ebdc;color:#766338;padding:5px 8px;border-radius:4px;align-self:start;margin-top:9px}.toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding-top:15px}.toolbar .spacer{flex:1}.toolbar input{background:white;border:1px solid var(--line);border-radius:7px;padding:8px 10px;min-width:100px;width:175px;font-size:12px}.toolbar select{max-width:160px;font-size:12px;border:1px solid var(--line);border-radius:7px;background:white;color:var(--ink);padding:8px}.workspace{flex:1;min-height:0;position:relative;overflow:hidden}.canvas{position:absolute;inset:0;overflow:hidden;touch-action:none;background-image:radial-gradient(#a6b7aa70 .8px,transparent .8px);background-size:24px 24px;cursor:grab}.canvas.panning{cursor:grabbing}.world{position:absolute;left:0;top:0;transform-origin:0 0;width:1px;height:1px}.edges{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}.edge path{fill:none;stroke:#8caaa0;stroke-width:1.8;pointer-events:stroke;cursor:pointer}.edge text{font-size:11px;fill:#587368;font-weight:500;paint-order:stroke;stroke:var(--paper);stroke-width:7;stroke-linejoin:round;pointer-events:auto;cursor:pointer}.edge.async path{stroke-dasharray:5 5}.edge.error path,.edge.conditional path{stroke:#b18b3c;stroke-dasharray:6 4}.edge.dim{opacity:.12}.edge.hot path{stroke:var(--accent);stroke-width:2.6}.card{position:absolute;width:300px;min-height:204px;padding:18px 20px 17px;background:#fffefb;border:1px solid #cbd9d0;border-top:3px solid var(--tone);border-radius:10px;box-shadow:var(--shadow);cursor:grab;user-select:none;transition:box-shadow .15s,opacity .15s;touch-action:none}.card:hover{box-shadow:0 10px 30px #173d3524}.card.selected{outline:3px solid #087b6955;outline-offset:4px}.card.dim{opacity:.22}.card .kicker{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--tone);font-weight:800;display:flex;justify-content:space-between;align-items:center}.card h2{font-size:19px;letter-spacing:-.4px;line-height:1.25;margin:13px 0 9px}.card p{font-size:12px;line-height:1.6;margin:0;color:#61766d}.card .owner{font-size:9px;color:#778c82;border-top:1px solid #e7ede7;margin-top:15px;padding-top:10px;display:flex;justify-content:space-between;gap:8px}.card .openmark{font-size:13px;color:#a0b6a8}.viewfocus{position:absolute;bottom:18px;left:20px;max-width:510px;background:#fffef8ed;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:8px;padding:12px 15px;font-size:11px;line-height:1.6;pointer-events:none}.viewfocus strong{display:block;color:var(--accent);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:3px}.zoom{position:absolute;right:19px;bottom:18px;display:flex;align-items:center;background:#fffdf8;border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:4px;gap:3px}.zoom button{border:0;background:transparent;font-size:15px;padding:6px 11px}.zoom span{font-size:10px;width:45px;text-align:center}.statusbar{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fffdf8;border-top:1px solid var(--line);font-size:10px;color:#718579;gap:10px;z-index:2}.inspector{position:absolute;right:0;top:0;bottom:0;width:350px;background:#fffef9;border-left:1px solid var(--line);box-shadow:-12px 0 40px #183e3b0c;z-index:4;overflow:auto;padding:22px;display:none}.inspector.open{display:block}.panelhead{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:20px}.panelhead button{padding:4px 9px;font-size:18px}.inspector h2{font-size:23px;margin:10px 0;letter-spacing:-.5px}.inspector p,.inspector li{font-size:12px;line-height:1.7;color:#5c7268}.inspector ul{padding-left:19px}.inspector li{margin:8px 0}.inspector h3{font-size:10px;letter-spacing:1px;text-transform:uppercase;margin:24px 0 10px;color:#718579}.inspector label{font-size:11px;display:block;margin:12px 0 5px}.inspector input,.inspector textarea,.inspector select{width:100%;border:1px solid #cad7ce;border-radius:6px;padding:9px;background:white;color:var(--ink);font-size:12px}.inspector textarea{resize:vertical;min-height:80px}.inspector .connection{display:block;text-align:left;font-size:11px;width:100%;margin:6px 0;font-weight:500}.inspector .connection small{display:block;color:#7c8f83;margin-top:4px;font-size:10px}.notice{background:#f4efdf;border-left:3px solid #b69851;padding:12px;font-size:11px;line-height:1.65;color:#756139}.toast{position:fixed;left:50%;bottom:50px;transform:translateX(-50%);background:#173e38;color:#fff;padding:12px 20px;border-radius:8px;box-shadow:var(--shadow);z-index:20;font-size:12px;display:none;max-width:80vw}.modal{position:fixed;inset:0;background:#092d28a8;backdrop-filter:blur(3px);display:none;z-index:10;padding:5vh 7vw;overflow:auto}.modal.open{display:block}.sheet{background:#fffef9;max-width:1050px;margin:auto;border-radius:14px;padding:30px 36px}.sheet h2{font-size:28px;margin:10px 0}.sheet p{font-size:13px;line-height:1.7;color:#5d7367}.sheet h3{font-size:16px;margin-top:30px}.sheet ul,.sheet ol{font-size:13px;line-height:1.8;color:#536f61}.sheet table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.6}.sheet td,.sheet th{border-bottom:1px solid var(--line);padding:11px;text-align:left;vertical-align:top}.sheet th{color:var(--accent);background:#f1f5ed}.sheet a{color:var(--accent)}.notecols{display:grid;grid-template-columns:1fr 1fr;gap:28px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}@media(max-width:900px){.app{grid-template-columns:175px 1fr}.sidebar{padding:20px 10px}.top{padding:15px}.toolbar .spacer{display:none}.viewfocus{max-width:300px;font-size:10px}.inspector{width:300px}.titleline .badge{display:none}.statusbar{font-size:9px}.notecols{grid-template-columns:1fr}}@media(max-width:600px){.app{grid-template-columns:1fr}.sidebar{display:none}.top{padding:12px}.toolbar{gap:4px;padding-top:8px}.toolbar input{width:100px}.toolbar button,.toolbar select{font-size:10px;padding:7px}h1{font-size:20px}.viewfocus{display:none}.inspector{width:min(350px,90vw)}.sheet{padding:20px}.statusbar span:last-child{display:none}}
+</style></head>
+<body>
+<div class="app">
+<aside class="sidebar"><div class="brand">PLAY<span>FLEXIBLE CANVAS</span></div><div class="sideintro">Plan a session.<br>Explore the connections.<br>Make it your own.</div><div class="navlabel">Workflow views</div><nav class="nav" id="nav" aria-label="Workflow views"></nav><div class="bottom"><button id="design">Example notes ↗</button><button id="help">How to use this canvas</button>POKÉMON GO · EXAMPLE<br>Editable workflow playground.<br>No game account connected.</div></aside>
+<main class="main"><header class="top"><div class="eyebrow"><span class="dot"></span>Workflow playground <span style="color:#97a89a;font-weight:400">/ Pokémon Go example</span></div><div class="titleline"><div><h1 id="title"></h1><div class="subtitle" id="subtitle"></div></div><span class="badge">Editable · local prototype</span></div><div class="toolbar"><select id="viewselect" aria-label="Select workflow view"></select><input id="search" type="search" placeholder="Find a card…" aria-label="Find a card in this view"><button id="fit" title="Fit view (F)">Fit view</button><button id="focus" title="Show connections for the selected card">Focus links</button><button id="add">+ Note</button><button id="undo" title="Undo (Ctrl/⌘ Z)">↶</button><button id="redo" title="Redo (Ctrl/⌘ Shift Z)">↷</button><span class="spacer"></span><select id="exports" aria-label="Export options"><option value="">Export…</option><option value="workspace">Workspace JSON</option><option value="view">Flexible Canvas JSON</option><option value="svg">Current view SVG</option></select><button id="import">Import JSON</button><button class="primary" id="savehtml">Save HTML</button></div></header>
+<div class="workspace"><div class="canvas" id="canvas" aria-label="Workflow canvas. Drag blank space to pan; wheel to zoom."><div class="world" id="world"><svg class="edges" id="edges" aria-hidden="true"></svg><div id="cards"></div></div></div><div class="viewfocus"><strong>Canvas tip</strong><span id="principle"></span></div><div class="zoom"><button id="minus" aria-label="Zoom out">−</button><span id="zoomlabel">100%</span><button id="plus" aria-label="Zoom in">+</button><button id="resetview" title="Restore this view's starting positions">Reset layout</button></div><aside class="inspector" id="inspector" aria-label="Selection details"></aside></div><footer class="statusbar"><span id="status" role="status">Ready · local file</span><span id="counts"></span><span>Drag cards · drag background to pan · wheel to zoom · Esc to clear</span></footer></main></div>
+<input id="fileinput" type="file" accept=".json,application/json" hidden><div class="toast" id="toast" role="status"></div>
+<div class="modal" id="notesmodal" role="dialog" aria-modal="true" aria-label="Example notes"><div class="sheet"><div class="panelhead">Example notes<button class="closemodal" aria-label="Close notes">×</button></div><h2>A reusable workflow playground</h2><p>This fictional Pokémon Go outing demonstrates connected views, editable cards, decision branches, and portable saves. Replace the seed JSON to map another workflow.</p><h3>What saves</h3><p>Dragging and editing update the workspace model. Browser storage remembers it locally; HTML and JSON exports preserve a portable copy. No server or game account is connected.</p><h3>Customize</h3><p>Change board titles, nodes, and labeled connections in the seed JSON. Keep stable IDs and valid endpoints. Use the inspector to edit summaries, notes, and links.</p><p>Unofficial fan-made planning example. Pokémon Go and related names belong to their respective owners. No official art, live event data, or gameplay automation is included.</p></div></div>
+<div class="modal" id="helpmodal" role="dialog" aria-modal="true" aria-label="Canvas help"><div class="sheet" style="max-width:700px"><div class="panelhead">Canvas controls<button class="closemodal" aria-label="Close help">×</button></div><h2>Room to think</h2><p>The diagram has no fixed page width or height. Drag empty space to move around; zoom out for context or in for detail.</p><table><tr><th>Action</th><th>Control</th></tr><tr><td>Move a card</td><td>Drag it. Selected cards also move with arrow keys (Shift = larger steps).</td></tr><tr><td>Pan / zoom</td><td>Drag background / scroll wheel. Shift + wheel pans. Use + / − buttons too.</td></tr><tr><td>Inspect / edit</td><td>Click a card. Edit its title, summary or review notes in the panel.</td></tr><tr><td>Focus connections</td><td>Select a card, then Focus links to fade unrelated content.</td></tr><tr><td>Undo / redo</td><td>Ctrl or ⌘ Z / Ctrl or ⌘ Shift Z. Last 60 changes in this session.</td></tr><tr><td>Fit / clear selection</td><td>F / Escape.</td></tr><tr><td>Add a concept</td><td>+ Note creates an editable card. Connect it using the inspector.</td></tr><tr><td>Save a portable copy</td><td>Save HTML embeds all current views and edits. Workspace JSON can be re-imported.</td></tr><tr><td>Use Flexible Canvas</td><td>Export → Flexible Canvas JSON exports the selected view with current positions.</td></tr></table><p class="notice">Local saves belong to this browser and may be unavailable in restricted previews. Use Save HTML or export JSON for a durable copy. No backend or game connection is active in this file.</p></div></div>
+<script id="seed" type="application/json">{
+  "schemaVersion": 1,
+  "documentId": "pokemon-go-playground-v1",
+  "title": "Pokémon Go workflow playground",
+  "updatedAt": "2026-11-05",
+  "active": "outing",
+  "boards": [
+    {
+      "id": "outing",
+      "title": "Plan an outing",
+      "subtitle": "Choose a goal, prepare, and head out.",
+      "focus": "Use each card as a small, editable planning step.",
+      "nodes": [
+        {
+          "id": "goal",
+          "label": "Choose a goal",
+          "kind": "start",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "description": "Pick a focus for this play session.",
+          "details": [
+            "Examples: explore, catch Pokémon, or meet friends."
+          ],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "prepare",
+          "label": "Prepare supplies",
+          "kind": "process",
+          "position": {
+            "x": 460,
+            "y": 0
+          },
+          "description": "Check battery, time, and in-game inventory.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "ready",
+          "label": "Ready to head out?",
+          "kind": "decision",
+          "position": {
+            "x": 920,
+            "y": 0
+          },
+          "description": "Decide whether the plan works today.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "adjust",
+          "label": "Adjust the plan",
+          "kind": "manual",
+          "position": {
+            "x": 460,
+            "y": 350
+          },
+          "description": "Shorten the route or reschedule.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "play",
+          "label": "Play the session",
+          "kind": "process",
+          "position": {
+            "x": 1380,
+            "y": 0
+          },
+          "description": "Open the encounter workflow for a closer look.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "encounter"
+        },
+        {
+          "id": "review",
+          "label": "Review the session",
+          "kind": "end",
+          "position": {
+            "x": 1380,
+            "y": 350
+          },
+          "description": "Capture highlights and choose a next goal.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "review"
+        }
+      ],
+      "edges": [
+        {
+          "id": "outing-0",
+          "to": "prepare",
+          "label": "set focus",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "goal"
+        },
+        {
+          "id": "outing-1",
+          "to": "ready",
+          "label": "check readiness",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "prepare"
+        },
+        {
+          "id": "outing-2",
+          "to": "play",
+          "label": "yes",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "ready"
+        },
+        {
+          "id": "outing-3",
+          "to": "adjust",
+          "label": "not yet",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "ready"
+        },
+        {
+          "id": "outing-4",
+          "to": "prepare",
+          "label": "try again",
+          "kind": "feedback",
+          "note": "Illustrative manual workflow.",
+          "from": "adjust"
+        },
+        {
+          "id": "outing-5",
+          "to": "review",
+          "label": "finish",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "play"
+        }
+      ]
+    },
+    {
+      "id": "encounter",
+      "title": "Explore & encounter",
+      "subtitle": "A simple branch during a manual play session.",
+      "focus": "Connections describe decisions; this page does not control the game.",
+      "nodes": [
+        {
+          "id": "explore",
+          "label": "Explore the area",
+          "kind": "start",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "description": "Follow your chosen route.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "encounter",
+          "label": "Find an encounter",
+          "kind": "process",
+          "position": {
+            "x": 460,
+            "y": 0
+          },
+          "description": "Notice a Pokémon you might want to catch.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "choose",
+          "label": "Try to catch it?",
+          "kind": "decision",
+          "position": {
+            "x": 920,
+            "y": 0
+          },
+          "description": "Choose based on your goal and supplies.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "catch",
+          "label": "Try a catch",
+          "kind": "manual",
+          "position": {
+            "x": 1380,
+            "y": 0
+          },
+          "description": "Play the encounter in Pokémon Go.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "continue",
+          "label": "Continue exploring",
+          "kind": "process",
+          "position": {
+            "x": 920,
+            "y": 350
+          },
+          "description": "Move on to another encounter.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "finish",
+          "label": "End the session",
+          "kind": "end",
+          "position": {
+            "x": 1380,
+            "y": 350
+          },
+          "description": "Open the review when you are ready.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "review"
+        }
+      ],
+      "edges": [
+        {
+          "id": "encounter-0",
+          "to": "encounter",
+          "label": "discover",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "explore"
+        },
+        {
+          "id": "encounter-1",
+          "to": "choose",
+          "label": "consider",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "encounter"
+        },
+        {
+          "id": "encounter-2",
+          "to": "catch",
+          "label": "yes",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "choose"
+        },
+        {
+          "id": "encounter-3",
+          "to": "continue",
+          "label": "skip",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "choose"
+        },
+        {
+          "id": "encounter-4",
+          "to": "encounter",
+          "label": "next encounter",
+          "kind": "feedback",
+          "note": "Illustrative manual workflow.",
+          "from": "continue"
+        },
+        {
+          "id": "encounter-5",
+          "to": "finish",
+          "label": "wrap up",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "catch"
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Review & repeat",
+      "subtitle": "Keep the useful notes from the session.",
+      "focus": "Replace this example with any workflow using the same canvas.",
+      "nodes": [
+        {
+          "id": "notes",
+          "label": "Capture highlights",
+          "kind": "start",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "description": "Note what you enjoyed and what you learned.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "organize",
+          "label": "Review your collection",
+          "kind": "manual",
+          "position": {
+            "x": 460,
+            "y": 0
+          },
+          "description": "Choose what to keep working toward.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "next",
+          "label": "Set a next goal",
+          "kind": "process",
+          "position": {
+            "x": 920,
+            "y": 0
+          },
+          "description": "Keep the next session easy to plan.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "plan",
+          "label": "Return to planning",
+          "kind": "end",
+          "position": {
+            "x": 1380,
+            "y": 0
+          },
+          "description": "Open the outing view and adjust its cards.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "outing"
+        }
+      ],
+      "edges": [
+        {
+          "id": "review-0",
+          "to": "organize",
+          "label": "review",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "notes"
+        },
+        {
+          "id": "review-1",
+          "to": "next",
+          "label": "choose",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "organize"
+        },
+        {
+          "id": "review-2",
+          "to": "plan",
+          "label": "plan again",
+          "kind": "feedback",
+          "note": "Illustrative manual workflow.",
+          "from": "next"
+        }
+      ]
+    }
+  ]
+}</script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),clone=x=>JSON.parse(JSON.stringify(x));
+const baseline=JSON.parse($('seed').textContent);let state=clone(baseline),selected=null,focused=false,undoStack=[],redoStack=[],camera={x:65,y:50,z:.7},gesture=null,search='';
+const KEY='pokemon-go-workflow:'+baseline.documentId;let storageOK=true;
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&validWorkspace(s))state=s;}catch(e){storageOK=false;}
+const palette={start:'#39865e',end:'#39865e',process:'#49738a',system:'#087b83',data:'#8065a4',manual:'#ba7947',external:'#738078',decision:'#ac8433',risk:'#b65f55'};
+function validNode(n){return n&&typeof n.id==='string'&&n.id.length>0&&typeof n.label==='string'&&n.position&&Number.isFinite(n.position.x)&&Number.isFinite(n.position.y)&&typeof n.kind==='string'&&typeof n.description==='string'&&Array.isArray(n.details)&&n.details.every(d=>typeof d==='string')&&['notes','owner','status','linkView'].every(k=>n[k]===undefined||typeof n[k]==='string');}
+function validBoard(b){if(!b||!['id','title','subtitle','focus'].every(k=>typeof b[k]==='string')||!b.id||!Array.isArray(b.nodes)||!b.nodes.length||!Array.isArray(b.edges)||!b.nodes.every(validNode))return false;const ids=new Set(b.nodes.map(n=>n.id));return ids.size===b.nodes.length&&new Set(b.edges.map(e=>e.id)).size===b.edges.length&&b.edges.every(e=>e&&typeof e.id==='string'&&e.id&&ids.has(e.from)&&ids.has(e.to)&&typeof e.label==='string'&&['note','kind'].every(k=>e[k]===undefined||typeof e[k]==='string'));}
+function validWorkspace(s){return s&&s.schemaVersion===1&&typeof s.documentId==='string'&&typeof s.title==='string'&&Array.isArray(s.boards)&&s.boards.length>0&&s.boards.every(validBoard)&&new Set(s.boards.map(b=>b.id)).size===s.boards.length&&s.boards.some(b=>b.id===s.active)&&s.boards.every(b=>b.nodes.every(n=>!n.linkView||s.boards.some(v=>v.id===n.linkView)));}
+function board(){return state.boards.find(b=>b.id===state.active)||state.boards[0];}
+function node(id){return board().nodes.find(n=>n.id===id);}
+function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(s){$('toast').textContent=s;$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',4200);}
+function persist(){state.updatedAt=new Date().toISOString();try{localStorage.setItem(KEY,JSON.stringify(state));storageOK=true;}catch(e){storageOK=false;}$('status').textContent=storageOK?'Saved in this browser · no backend connected':'Local save unavailable · export HTML or JSON';buttons();}
+function remember(){undoStack.push(clone(state));if(undoStack.length>60)undoStack.shift();redoStack=[];buttons();}
+function buttons(){$('undo').disabled=!undoStack.length;$('redo').disabled=!redoStack.length;}
+function restoreHistory(redo=false){const from=redo?redoStack:undoStack,to=redo?undoStack:redoStack;if(!from.length)return;to.push(clone(state));state=from.pop();selected=null;render();persist();toast(redo?'Change restored':'Change undone');}
+function nav(){$('nav').innerHTML='';$('viewselect').innerHTML='';state.boards.forEach((b,i)=>{const el=document.createElement('button');el.className=b.id===state.active?'active':'';el.innerHTML='<b>'+String(i+1).padStart(2,'0')+'</b><span>'+esc(b.title)+'</span>';el.onclick=()=>switchView(b.id);$('nav').append(el);const op=new Option(b.title,b.id);$('viewselect').add(op);});$('viewselect').value=state.active;}
+function switchView(id){state.active=id;selected=null;focused=false;search='';$('search').value='';render();fit();persist();}
+function render(){nav();$('title').textContent=board().title;$('subtitle').textContent=board().subtitle;$('principle').textContent=board().focus;$('counts').textContent=board().nodes.length+' cards · '+board().edges.length+' connections';renderCards();renderEdges();inspector();transform();buttons();}
+function connected(){const ids=new Set(selected?[selected]:[]);if(selected)board().edges.forEach(e=>{if(e.from===selected)ids.add(e.to);if(e.to===selected)ids.add(e.from);});return ids;}
+function renderCards(){const links=connected();$('cards').innerHTML='';board().nodes.forEach(n=>{const el=document.createElement('article');el.className='card'+(n.id===selected?' selected':'')+((focused&&selected&&!links.has(n.id))||(search&&!((n.label+' '+n.description+' '+n.details.join(' ')).toLowerCase().includes(search)))?' dim':'');el.dataset.id=n.id;el.tabIndex=0;el.setAttribute('aria-label',n.label+'. Press Enter for details.');el.style.left=n.position.x+'px';el.style.top=n.position.y+'px';el.style.setProperty('--tone',palette[n.kind]||palette.process);el.innerHTML='<div class="kicker"><span>'+esc(n.kind)+'</span><span class="openmark">↗</span></div><h2>'+esc(n.label)+'</h2><p>'+esc(n.description)+'</p><div class="owner"><span>'+esc(n.owner||'Workflow note')+'</span><span>'+((n.notes||'')?'● note':esc(n.status||'example'))+'</span></div>';el.addEventListener('pointerdown',ev=>startDrag(ev,n));el.addEventListener('keydown',ev=>{if(ev.key==='Enter'){selectNode(n.id);ev.preventDefault();}});$('cards').append(el);});}
+function cardHeight(n){const el=[...$('cards').children].find(e=>e.dataset.id===n.id);return el?el.offsetHeight:210;}
+function geometry(e){const a=node(e.from),b=node(e.to);const ah=cardHeight(a),bh=cardHeight(b),ax=a.position.x,ay=a.position.y,bx=b.position.x,by=b.position.y;let p,q,mid,d;if(Math.abs(bx-ax)>Math.abs(by-ay)*.85){const dir=bx>=ax?1:-1;p={x:ax+(dir===1?300:0),y:ay+ah/2};q={x:bx+(dir===1?0:300),y:by+bh/2};mid=(p.x+q.x)/2;d=`M ${p.x} ${p.y} C ${mid} ${p.y}, ${mid} ${q.y}, ${q.x} ${q.y}`;}else{const dir=by>=ay?1:-1;p={x:ax+150,y:ay+(dir===1?ah:0)};q={x:bx+150,y:by+(dir===1?0:bh)};mid=(p.y+q.y)/2;d=`M ${p.x} ${p.y} C ${p.x} ${mid}, ${q.x} ${mid}, ${q.x} ${q.y}`;}return {d,x:(p.x+q.x)/2,y:(p.y+q.y)/2-9};}
+function renderEdges(){$('edges').innerHTML='<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8caaa0"/></marker></defs>';board().edges.forEach((e,i)=>{const g=geometry(e),hot=selected&&(e.from===selected||e.to===selected),el=document.createElementNS('http://www.w3.org/2000/svg','g');el.setAttribute('class','edge '+(e.kind||'default')+(hot?' hot':'')+(focused&&selected&&!hot?' dim':''));el.innerHTML='<path d="'+g.d+'" marker-end="url(#arrow)"/><text x="'+g.x+'" y="'+g.y+'" text-anchor="middle">'+esc(e.label)+'</text>';el.addEventListener('click',()=>inspectEdge(i));$('edges').append(el);});}
+function selectNode(id){selected=id;renderCards();renderEdges();inspector();}
+function inspector(){const p=$('inspector');if(!selected){p.className='inspector';p.innerHTML='';return;}const n=node(selected);if(!n){selected=null;return inspector();}p.className='inspector open';p.innerHTML='<div class="panelhead">'+esc(n.kind)+' / '+esc(n.owner||'note')+'<button id="closepanel" aria-label="Close details">×</button></div><h2>'+esc(n.label)+'</h2><p>'+esc(n.description)+'</p><ul>'+n.details.map(d=>'<li>'+esc(d)+'</li>').join('')+'</ul>'+(n.linkView?'<button id="drill" class="primary">Open related view ↗</button>':'')+'<h3>Connections</h3><div id="connections"></div><h3>Edit this card</h3><label for="editlabel">Title</label><input id="editlabel" maxlength="120" value="'+esc(n.label)+'"><label for="editsummary">Summary</label><textarea id="editsummary" maxlength="500">'+esc(n.description)+'</textarea><label for="editnotes">Review notes</label><textarea id="editnotes" placeholder="Open question, decision, or change to consider…">'+esc(n.notes)+'</textarea><button id="applyedit" class="primary">Save card</button><h3>Add a connection</h3><label for="target">Connect this card to</label><select id="target">'+board().nodes.filter(v=>v.id!==n.id).map(v=>'<option value="'+esc(v.id)+'">'+esc(v.label)+'</option>').join('')+'</select><label for="edgelabel">Connection label</label><input id="edgelabel" maxlength="80" value="relates to"><button id="connect" style="margin-top:8px">Add connection</button><p style="font-size:10px">Edits update this workflow model. Local saves do not change a server or game account.</p>';
+$('closepanel').onclick=()=>{selected=null;renderCards();renderEdges();inspector();};if(n.linkView)$('drill').onclick=()=>switchView(n.linkView);
+board().edges.filter(e=>e.from===n.id||e.to===n.id).forEach(e=>{const other=e.from===n.id?e.to:e.from;const btn=document.createElement('button');btn.className='connection';btn.innerHTML=(e.from===n.id?'→ ':'← ')+esc(node(other).label)+'<small>'+esc(e.label)+'</small>';btn.onclick=()=>{selectNode(other);centerNode(other);};$('connections').append(btn);});
+$('applyedit').onclick=()=>{const label=$('editlabel').value.trim();if(!label){toast('Give this card a title.');return;}remember();n.label=label;n.description=$('editsummary').value.trim();n.notes=$('editnotes').value;render();persist();toast('Card updated');};
+$('connect').onclick=()=>{const to=$('target').value,label=$('edgelabel').value.trim();if(!to||!label)return;if(board().edges.some(e=>e.from===n.id&&e.to===to&&e.label===label)){toast('That connection already exists.');return;}remember();board().edges.push({id:'edge-'+Date.now(),from:n.id,to,label,kind:'default',note:''});render();persist();};}
+function inspectEdge(i){selected=null;renderCards();renderEdges();const e=board().edges[i],p=$('inspector');p.className='inspector open';p.innerHTML='<div class="panelhead">Connection<button id="closeedge" aria-label="Close connection">×</button></div><h2>'+esc(e.label)+'</h2><p>'+esc(node(e.from).label)+' → '+esc(node(e.to).label)+'</p><p>'+esc(e.note||'This line indicates the relationship or handoff named above. It does not imply a live integration.')+'</p><label for="changeedge">Label</label><input id="changeedge" maxlength="80" value="'+esc(e.label)+'"><label for="changenote">Connection notes</label><textarea id="changenote">'+esc(e.note)+'</textarea><button id="saveedge" class="primary">Save connection</button> <button id="deledge">Remove</button>';$('closeedge').onclick=()=>p.className='inspector';$('saveedge').onclick=()=>{const label=$('changeedge').value.trim();if(!label)return;remember();e.label=label;e.note=$('changenote').value;render();persist();};$('deledge').onclick=()=>{remember();board().edges.splice(i,1);render();persist();toast('Connection removed · Undo available');};}
+function transform(){$('world').style.transform=`translate(${camera.x}px,${camera.y}px) scale(${camera.z})`;$('canvas').style.backgroundSize=(24*camera.z)+'px '+(24*camera.z)+'px';$('canvas').style.backgroundPosition=camera.x+'px '+camera.y+'px';$('zoomlabel').textContent=Math.round(camera.z*100)+'%';}
+function bounds(){return board().nodes.reduce((r,n)=>({x:Math.min(r.x,n.position.x),y:Math.min(r.y,n.position.y),right:Math.max(r.right,n.position.x+300),bottom:Math.max(r.bottom,n.position.y+cardHeight(n))}),{x:Infinity,y:Infinity,right:-Infinity,bottom:-Infinity});}
+function fit(){const b=bounds(),w=$('canvas').clientWidth-(selected?350:0),h=$('canvas').clientHeight;camera.z=Math.min(1.1,Math.max(.08,Math.min((w-100)/(b.right-b.x),(h-120)/(b.bottom-b.y))));camera.x=(w-(b.right-b.x)*camera.z)/2-b.x*camera.z;camera.y=(h-60-(b.bottom-b.y)*camera.z)/2-b.y*camera.z;transform();}
+function centerNode(id){const n=node(id),w=$('canvas').clientWidth-350;camera.x=Math.max(160,w/2)-(n.position.x+150)*camera.z;camera.y=$('canvas').clientHeight/2-(n.position.y+100)*camera.z;transform();}
+function zoom(factor,x=$('canvas').clientWidth/2,y=$('canvas').clientHeight/2){const z=Math.min(3,Math.max(.06,camera.z*factor));camera.x=x-(x-camera.x)*z/camera.z;camera.y=y-(y-camera.y)*z/camera.z;camera.z=z;transform();}
+function startDrag(ev,n){if(ev.button!==0)return;ev.stopPropagation();ev.preventDefault();const el=ev.currentTarget;el.setPointerCapture(ev.pointerId);gesture={type:'node',id:n.id,sx:ev.clientX,sy:ev.clientY,x:n.position.x,y:n.position.y,moved:false};el.addEventListener('pointermove',moveGesture);el.addEventListener('pointerup',endGesture,{once:true});el.addEventListener('pointercancel',endGesture,{once:true});}
+function moveGesture(ev){if(!gesture)return;const dx=ev.clientX-gesture.sx,dy=ev.clientY-gesture.sy;if(gesture.type==='node'){if(!gesture.moved&&Math.hypot(dx,dy)>3){remember();gesture.moved=true;}if(gesture.moved){const n=node(gesture.id);n.position={x:Math.round(gesture.x+dx/camera.z),y:Math.round(gesture.y+dy/camera.z)};ev.currentTarget.style.left=n.position.x+'px';ev.currentTarget.style.top=n.position.y+'px';renderEdges();}}else{camera.x=gesture.x+dx;camera.y=gesture.y+dy;gesture.moved=Math.hypot(dx,dy)>3;transform();}}
+function endGesture(ev){if(!gesture)return;ev.currentTarget.removeEventListener('pointermove',moveGesture);if(gesture.type==='node'){const id=gesture.id,moved=gesture.moved;gesture=null;if(moved){persist();}else selectNode(id);}else{if(!gesture.moved){selected=null;renderCards();renderEdges();inspector();}gesture=null;$('canvas').classList.remove('panning');}}
+$('canvas').addEventListener('pointerdown',ev=>{if(ev.button!==0||ev.target.closest('.edge')||ev.target.closest('.card'))return;ev.currentTarget.setPointerCapture(ev.pointerId);gesture={type:'pan',sx:ev.clientX,sy:ev.clientY,x:camera.x,y:camera.y,moved:false};$('canvas').classList.add('panning');ev.currentTarget.addEventListener('pointermove',moveGesture);ev.currentTarget.addEventListener('pointerup',endGesture,{once:true});ev.currentTarget.addEventListener('pointercancel',endGesture,{once:true});});
+$('canvas').addEventListener('wheel',ev=>{ev.preventDefault();if(ev.shiftKey){camera.x-=ev.deltaY;camera.y-=ev.deltaX;transform();return;}const r=$('canvas').getBoundingClientRect();zoom(Math.exp(-ev.deltaY*.0015),ev.clientX-r.left,ev.clientY-r.top);},{passive:false});
+$('fit').onclick=fit;$('plus').onclick=()=>zoom(1.2);$('minus').onclick=()=>zoom(1/1.2);$('viewselect').onchange=e=>switchView(e.target.value);$('focus').onclick=()=>{if(!selected){toast('Select a card to highlight its connections.');return;}focused=!focused;renderCards();renderEdges();$('focus').textContent=focused?'Show all links':'Focus links';};$('undo').onclick=()=>restoreHistory();$('redo').onclick=()=>restoreHistory(true);
+$('search').oninput=ev=>{search=ev.target.value.toLowerCase();renderCards();};$('search').onkeydown=ev=>{if(ev.key==='Enter'){const n=board().nodes.find(n=>(n.label+' '+n.description+' '+n.details.join(' ')).toLowerCase().includes(search));if(n){selectNode(n.id);centerNode(n.id);}else toast('No card matches this search.');}};
+$('add').onclick=()=>{remember();const r=$('canvas').getBoundingClientRect(),id='note-'+Date.now();board().nodes.push({id,label:'New workflow note',kind:'manual',position:{x:Math.round((r.width/2-camera.x)/camera.z),y:Math.round((r.height/2-camera.y)/camera.z)},description:'Describe the concept, responsibility or open question.',details:[],owner:'Workflow review',status:'proposed',notes:''});selected=id;render();persist();centerNode(id);};
+$('resetview').onclick=()=>{if(!confirm('Restore the starting positions for this view? Text and connections stay unchanged. Undo is available.'))return;remember();const original=baseline.boards.find(b=>b.id===state.active);if(original)board().nodes.forEach(n=>{const old=original.nodes.find(o=>o.id===n.id);if(old)n.position=clone(old.position);});render();fit();persist();};
+function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);}
+function exportHTML(){const doc=document.documentElement.cloneNode(true),copy=clone(state);copy.documentId='pokemon-go-workflow-'+Date.now();doc.querySelector('#seed').textContent=JSON.stringify(copy).replace(/</g,'\\u003c');doc.querySelector('#cards').replaceChildren();doc.querySelector('#edges').replaceChildren();doc.querySelector('#inspector').replaceChildren();doc.querySelector('#inspector').className='inspector';doc.querySelectorAll('.modal').forEach(m=>m.classList.remove('open'));doc.querySelector('#toast').style.display='none';download('pokemon-go-workflow.html','<!DOCTYPE html>\n'+doc.outerHTML,'text/html');toast('HTML copy includes all current edits and layouts.');}
+function flexibleExport(){const b=board();return {meta:{title:'Pokémon Go · '+b.title,subtitle:b.subtitle,owner:'Workflow playground',footnote:'Workflow example · '+state.updatedAt,showLegend:true},layout:{direction:'LR',nodeSpacing:90,rankSpacing:160},nodes:b.nodes.map(n=>({id:n.id,label:n.label,kind:n.kind,description:n.description,details:n.details.concat(n.notes?['Review note: '+n.notes]:[]),owner:n.owner,status:n.status||'proposed',position:n.position,width:300})),edges:b.edges.map(e=>({id:e.id,from:e.from,to:e.to,label:e.label,kind:e.kind||'default',note:e.note||''}))};}
+function wrap(text,max=34){const words=String(text||'').split(/\s+/),lines=[];let l='';words.forEach(w=>{if((l+' '+w).trim().length>max&&l){lines.push(l);l=w;}else l=(l+' '+w).trim();});if(l)lines.push(l);return lines;}
+function exportSVG(){const b=bounds(),pad=60,top=100;let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${b.right-b.x+pad*2}" height="${b.bottom-b.y+pad*2+top}" viewBox="${b.x-pad} ${b.y-pad-top} ${b.right-b.x+pad*2} ${b.bottom-b.y+pad*2+top}"><rect x="${b.x-pad}" y="${b.y-pad-top}" width="100%" height="100%" fill="#f7f8f4"/><style>text{font-family:Arial,sans-serif;fill:#183e3b}</style><defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#8caaa0"/></marker></defs><text x="${b.x}" y="${b.y-85}" font-size="27" font-weight="bold">Pokémon Go · ${esc(board().title)}</text><text x="${b.x}" y="${b.y-55}" font-size="13">Editable example · no game account connected</text>`;board().edges.forEach(e=>{const g=geometry(e);svg+=`<path d="${g.d}" fill="none" stroke="#8caaa0" stroke-width="2" marker-end="url(#a)"/><text x="${g.x}" y="${g.y}" font-size="11" text-anchor="middle" stroke="#f7f8f4" stroke-width="5" paint-order="stroke">${esc(e.label)}</text>`;});board().nodes.forEach(n=>{const {x,y}=n.position;svg+=`<rect x="${x}" y="${y}" width="300" height="${cardHeight(n)}" rx="10" fill="#fffefb" stroke="#cbd9d0"/><rect x="${x+10}" y="${y}" width="280" height="3" fill="${palette[n.kind]||palette.process}"/><text x="${x+20}" y="${y+27}" font-size="10">${esc(n.kind.toUpperCase())}</text>`;let at=y+56;wrap(n.label,25).forEach(t=>{svg+=`<text x="${x+20}" y="${at}" font-size="18" font-weight="bold">${esc(t)}</text>`;at+=23;});at+=9;wrap(n.description,38).forEach(t=>{svg+=`<text x="${x+20}" y="${at}" font-size="12">${esc(t)}</text>`;at+=18;});});svg+='</svg>';download('pokemon-go-'+board().id+'.svg',svg,'image/svg+xml');toast('Full current view exported as SVG.');}
+$('savehtml').onclick=exportHTML;$('exports').onchange=ev=>{const type=ev.target.value;if(type==='workspace')download('pokemon-go-workflow-workspace.json',JSON.stringify(state,null,2),'application/json');if(type==='view')download('pokemon-go-'+board().id+'.json',JSON.stringify(flexibleExport(),null,2),'application/json');if(type==='svg')exportSVG();ev.target.value='';};
+$('import').onclick=()=>$('fileinput').click();$('fileinput').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{if(f.size>5000000)throw Error('File exceeds 5 MB.');const x=JSON.parse(await f.text());if(x.schemaVersion===1){if(!validWorkspace(x))throw Error('Invalid workspace structure or connections.');if(!confirm('Replace the current workspace with this imported copy? Undo is available.'))return;remember();state={...x,documentId:baseline.documentId};}else{if(!Array.isArray(x.nodes)||!Array.isArray(x.edges))throw Error('Expected a workspace or Flexible Canvas JSON file.');const id='import-'+Date.now(),b={id,title:x.meta?.title||f.name,subtitle:x.meta?.subtitle||'Imported Flexible Canvas diagram',focus:x.meta?.footnote||'Imported diagram; review before relying on its content.',nodes:x.nodes.map((n,i)=>({...n,position:n.position||{x:(i%4)*460,y:Math.floor(i/4)*340},kind:n.kind||'process',description:n.description||'',details:n.details||[],notes:''})),edges:x.edges.map((e,i)=>({...e,id:e.id||'import-edge-'+i,label:e.label||''}))};if(!validBoard(b))throw Error('Invalid nodes, duplicate IDs or unresolved connections.');remember();state.boards.push(b);state.active=id;}selected=null;render();fit();persist();toast('Imported successfully.');}catch(err){toast('Import failed: '+err.message);}finally{ev.target.value='';}};
+function modal(id){$(id).classList.add('open');$(id).querySelector('button').focus();}
+$('design').onclick=()=>modal('notesmodal');$('help').onclick=()=>modal('helpmodal');document.querySelectorAll('.closemodal').forEach(b=>b.onclick=()=>b.closest('.modal').classList.remove('open'));document.querySelectorAll('.modal').forEach(m=>m.onclick=ev=>{if(ev.target===m)m.classList.remove('open');});
+document.addEventListener('keydown',ev=>{const input=/INPUT|TEXTAREA|SELECT/.test(ev.target.tagName);if(ev.key==='Escape'){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('open'));selected=null;renderCards();renderEdges();inspector();return;}if(input)return;if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='z'){ev.preventDefault();restoreHistory(ev.shiftKey);return;}if(ev.key.toLowerCase()==='f'){ev.preventDefault();fit();}if(selected&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key)){ev.preventDefault();remember();const n=node(selected),d=ev.shiftKey?40:10;n.position.x+=(ev.key==='ArrowRight'?d:ev.key==='ArrowLeft'?-d:0);n.position.y+=(ev.key==='ArrowDown'?d:ev.key==='ArrowUp'?-d:0);renderCards();renderEdges();persist();}});
+window.addEventListener('resize',()=>transform());
+render();fit();$('status').textContent=storageOK?'Ready · local auto-save · no backend connected':'Local save unavailable · export HTML or JSON';
+</script></body></html>

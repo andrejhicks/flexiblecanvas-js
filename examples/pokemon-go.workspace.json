@@ -1,0 +1,389 @@
+{
+  "schemaVersion": 1,
+  "documentId": "pokemon-go-playground-v1",
+  "title": "Pokémon Go workflow playground",
+  "updatedAt": "2026-11-05",
+  "active": "outing",
+  "boards": [
+    {
+      "id": "outing",
+      "title": "Plan an outing",
+      "subtitle": "Choose a goal, prepare, and head out.",
+      "focus": "Use each card as a small, editable planning step.",
+      "nodes": [
+        {
+          "id": "goal",
+          "label": "Choose a goal",
+          "kind": "start",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "description": "Pick a focus for this play session.",
+          "details": [
+            "Examples: explore, catch Pokémon, or meet friends."
+          ],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "prepare",
+          "label": "Prepare supplies",
+          "kind": "process",
+          "position": {
+            "x": 460,
+            "y": 0
+          },
+          "description": "Check battery, time, and in-game inventory.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "ready",
+          "label": "Ready to head out?",
+          "kind": "decision",
+          "position": {
+            "x": 920,
+            "y": 0
+          },
+          "description": "Decide whether the plan works today.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "adjust",
+          "label": "Adjust the plan",
+          "kind": "manual",
+          "position": {
+            "x": 460,
+            "y": 350
+          },
+          "description": "Shorten the route or reschedule.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "play",
+          "label": "Play the session",
+          "kind": "process",
+          "position": {
+            "x": 1380,
+            "y": 0
+          },
+          "description": "Open the encounter workflow for a closer look.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "encounter"
+        },
+        {
+          "id": "review",
+          "label": "Review the session",
+          "kind": "end",
+          "position": {
+            "x": 1380,
+            "y": 350
+          },
+          "description": "Capture highlights and choose a next goal.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "review"
+        }
+      ],
+      "edges": [
+        {
+          "id": "outing-0",
+          "to": "prepare",
+          "label": "set focus",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "goal"
+        },
+        {
+          "id": "outing-1",
+          "to": "ready",
+          "label": "check readiness",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "prepare"
+        },
+        {
+          "id": "outing-2",
+          "to": "play",
+          "label": "yes",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "ready"
+        },
+        {
+          "id": "outing-3",
+          "to": "adjust",
+          "label": "not yet",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "ready"
+        },
+        {
+          "id": "outing-4",
+          "to": "prepare",
+          "label": "try again",
+          "kind": "feedback",
+          "note": "Illustrative manual workflow.",
+          "from": "adjust"
+        },
+        {
+          "id": "outing-5",
+          "to": "review",
+          "label": "finish",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "play"
+        }
+      ]
+    },
+    {
+      "id": "encounter",
+      "title": "Explore & encounter",
+      "subtitle": "A simple branch during a manual play session.",
+      "focus": "Connections describe decisions; this page does not control the game.",
+      "nodes": [
+        {
+          "id": "explore",
+          "label": "Explore the area",
+          "kind": "start",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "description": "Follow your chosen route.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "encounter",
+          "label": "Find an encounter",
+          "kind": "process",
+          "position": {
+            "x": 460,
+            "y": 0
+          },
+          "description": "Notice a Pokémon you might want to catch.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "choose",
+          "label": "Try to catch it?",
+          "kind": "decision",
+          "position": {
+            "x": 920,
+            "y": 0
+          },
+          "description": "Choose based on your goal and supplies.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "catch",
+          "label": "Try a catch",
+          "kind": "manual",
+          "position": {
+            "x": 1380,
+            "y": 0
+          },
+          "description": "Play the encounter in Pokémon Go.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "continue",
+          "label": "Continue exploring",
+          "kind": "process",
+          "position": {
+            "x": 920,
+            "y": 350
+          },
+          "description": "Move on to another encounter.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "finish",
+          "label": "End the session",
+          "kind": "end",
+          "position": {
+            "x": 1380,
+            "y": 350
+          },
+          "description": "Open the review when you are ready.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "review"
+        }
+      ],
+      "edges": [
+        {
+          "id": "encounter-0",
+          "to": "encounter",
+          "label": "discover",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "explore"
+        },
+        {
+          "id": "encounter-1",
+          "to": "choose",
+          "label": "consider",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "encounter"
+        },
+        {
+          "id": "encounter-2",
+          "to": "catch",
+          "label": "yes",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "choose"
+        },
+        {
+          "id": "encounter-3",
+          "to": "continue",
+          "label": "skip",
+          "kind": "conditional",
+          "note": "Illustrative manual workflow.",
+          "from": "choose"
+        },
+        {
+          "id": "encounter-4",
+          "to": "encounter",
+          "label": "next encounter",
+          "kind": "feedback",
+          "note": "Illustrative manual workflow.",
+          "from": "continue"
+        },
+        {
+          "id": "encounter-5",
+          "to": "finish",
+          "label": "wrap up",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "catch"
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Review & repeat",
+      "subtitle": "Keep the useful notes from the session.",
+      "focus": "Replace this example with any workflow using the same canvas.",
+      "nodes": [
+        {
+          "id": "notes",
+          "label": "Capture highlights",
+          "kind": "start",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "description": "Note what you enjoyed and what you learned.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "organize",
+          "label": "Review your collection",
+          "kind": "manual",
+          "position": {
+            "x": 460,
+            "y": 0
+          },
+          "description": "Choose what to keep working toward.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "next",
+          "label": "Set a next goal",
+          "kind": "process",
+          "position": {
+            "x": 920,
+            "y": 0
+          },
+          "description": "Keep the next session easy to plan.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": ""
+        },
+        {
+          "id": "plan",
+          "label": "Return to planning",
+          "kind": "end",
+          "position": {
+            "x": 1380,
+            "y": 0
+          },
+          "description": "Open the outing view and adjust its cards.",
+          "details": [],
+          "owner": "Player",
+          "status": "example",
+          "notes": "",
+          "linkView": "outing"
+        }
+      ],
+      "edges": [
+        {
+          "id": "review-0",
+          "to": "organize",
+          "label": "review",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "notes"
+        },
+        {
+          "id": "review-1",
+          "to": "next",
+          "label": "choose",
+          "kind": "default",
+          "note": "Illustrative manual workflow.",
+          "from": "organize"
+        },
+        {
+          "id": "review-2",
+          "to": "plan",
+          "label": "plan again",
+          "kind": "feedback",
+          "note": "Illustrative manual workflow.",
+          "from": "next"
+        }
+      ]
+    }
+  ]
+}
